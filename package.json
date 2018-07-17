@@ -1,0 +1,33 @@
+{
+  "name": "apollo-datasource-graphql",
+  "version": "1.0.0",
+  "description": "Create Apollo DataSource to connect to a GraphQL API",
+  "main": "dist/index.js",
+  "author": "Kristy Miller <kristy@poetic.io>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "start": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@types/node": "^10.5.2",
+    "apollo-cache-inmemory": "^1.2.5",
+    "apollo-client": "^2.3.5",
+    "apollo-link": "^1.2.2",
+    "apollo-link-context": "^1.0.8",
+    "apollo-link-error": "^1.1.0",
+    "apollo-link-http": "^1.5.4",
+    "graphql": "^0.13.2",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.10",
+    "ts-node": "^7.0.0",
+    "tslint": "^5.11.0",
+    "tslint-config-airbnb": "^5.9.2",
+    "typescript": "^2.9.2"
+  },
+  "devDependencies": {
+    "@types/isomorphic-fetch": "^0.0.34",
+    "@types/lodash": "^4.14.112"
+  }
+}
