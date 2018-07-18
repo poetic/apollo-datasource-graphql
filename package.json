@@ -6,7 +6,7 @@
   "author": "Kristy Miller <kristy@poetic.io>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist/ && tsc",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "start": "ts-node src/index.ts"
   },
@@ -18,6 +18,8 @@
     "apollo-link-context": "^1.0.8",
     "apollo-link-error": "^1.1.0",
     "apollo-link-http": "^1.5.4",
+    "apollo-server-errors": "^2.0.0-rc.1",
+    "await-to-js": "^2.0.1",
     "graphql": "^0.13.2",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.10",

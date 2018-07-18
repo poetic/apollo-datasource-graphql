@@ -1,1 +1,1 @@
-export { GraphqlDataSource } from './GraphqlDataSource';
+export { GraphQLDataSource } from './GraphQLDataSource';
