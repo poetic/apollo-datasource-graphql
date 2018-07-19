@@ -4,57 +4,30 @@ import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
 import { ApolloError, AuthenticationError, ForbiddenError } from 'apollo-server-errors';
 import to from 'await-to-js';
+import { DocumentNode } from 'graphql';
 import fetch from 'isomorphic-fetch';
-
-import { IMutationRequest, RequestType } from './types';
 
 export class GraphQLDataSource {
   public baseURL?: string;
 
-  public async mutation(request: IMutationRequest) {
-    const graphQLRequest = this.buildGraphQLRequest(request, RequestType.MUTATION);
-
-    return this.executeSingleOperation(graphQLRequest);
+  public async mutation(
+    mutation: DocumentNode,
+    variables: Record<string, any>,
+  ) {
+    return this.executeSingleOperation({
+      variables,
+      query: mutation, // GraphQL request requires the DocumentNode property to be named query
+    });
   }
 
-  public async query(request: GraphQLRequest) {
-    const graphQLRequest = this.buildGraphQLRequest(request);
-
-    return this.executeSingleOperation(graphQLRequest);
+  public async query(
+    query: DocumentNode,
+    variables: Record<string, any>,
+  ) {
+    return this.executeSingleOperation({ query, variables });
   }
 
   protected willSendRequest?(request: any): any;
-
-  private buildGraphQLRequest(
-    graphQLRequest: any,
-    requestType: RequestType = RequestType.QUERY,
-  ) {
-    const {
-      context,
-      extensions,
-      operationName,
-      variables,
-    } = graphQLRequest;
-
-    let query;
-
-    switch (requestType) {
-      case RequestType.MUTATION:
-        query = graphQLRequest.mutation;
-
-        break;
-      default:
-        query = graphQLRequest.query;
-    }
-
-    return {
-      context,
-      extensions,
-      operationName,
-      query,
-      variables,
-    };
-  }
 
   private composeLinks(): ApolloLink {
     const uri = this.resolveUri();
