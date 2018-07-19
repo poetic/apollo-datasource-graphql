@@ -1,15 +1,29 @@
 {
   "name": "apollo-datasource-graphql",
   "version": "1.0.0",
+  "license": "MIT",
   "description": "Create Apollo DataSource to connect to a GraphQL API",
   "main": "dist/index.js",
-  "author": "Kristy Miller <kristy@poetic.io>",
-  "license": "MIT",
+  "author": "Kristy Miller",
+  "contributors": [
+    "Kristy Miller <kristy@poetic.io>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/poetic/apollo-datasource-graphql"
+  },
   "scripts": {
     "build": "rm -rf dist/ && tsc",
     "lint": "tslint -p tsconfig.json -c tslint.json",
+    "prepublishOnly": "yarn build",
     "start": "ts-node src/index.ts"
   },
+  "keywords": [
+    "apollo",
+    "apollo",
+    "datasource",
+    "graphql"
+  ],
   "dependencies": {
     "apollo-cache-inmemory": "^1.2.5",
     "apollo-client": "^2.3.5",
