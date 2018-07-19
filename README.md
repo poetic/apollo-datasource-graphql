@@ -23,7 +23,6 @@ Define a data source by extending the `GraphqlDataSource` class. You can then im
 ```javascript
 import { GraphQLDataSource } from 'apollo-datasource-graphql';
 import { gql } from 'apollo-server-express';
-import { get, set } from 'lodash';
 
 const CRAFT_BEERS = gql`
   query {
