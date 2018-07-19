@@ -102,7 +102,7 @@ export class GraphQLDataSource {
     const baseURL = this.baseURL;
 
     if (!baseURL) {
-      throw new ApolloError('Please provide Graphql URI in your GraphqlDataSource');
+      throw new ApolloError('Cannot make request to GraphQL API, missing baseURL');
     }
 
     return baseURL;
