@@ -4,20 +4,44 @@ import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
 import { ApolloError, AuthenticationError, ForbiddenError } from 'apollo-server-errors';
 import to from 'await-to-js';
+import { DocumentNode } from 'graphql';
 import fetch from 'isomorphic-fetch';
+
+export interface IMutationRequest extends GraphQLRequest {
+  mutation: DocumentNode;
+}
 
 export class GraphQLDataSource {
   public baseURL?: string;
 
-  public async mutation(graphQLRequest: GraphQLRequest) {
+  public async mutation(request: IMutationRequest) {
+    const graphQLRequest = this.buildGraphQLRequest(request, 'MUTATION');
+
     return this.executeSingleOperation(graphQLRequest);
   }
 
-  public async query(graphQLRequest: GraphQLRequest) {
+  public async query(request: GraphQLRequest) {
+    const graphQLRequest = this.buildGraphQLRequest(request);
+
     return this.executeSingleOperation(graphQLRequest);
   }
 
   protected willSendRequest?(request: any): any;
+
+  private buildGraphQLRequest(graphQLRequest: any, requestType: string = 'QUERY') {
+    let query;
+
+    switch (requestType) {
+      case 'MUTATION':
+        query = graphQLRequest.mutation;
+
+        break;
+      default:
+        query = graphQLRequest.query;
+    }
+
+    return { ...graphQLRequest, query };
+  }
 
   private composeLinks(): ApolloLink {
     const uri = this.resolveUri();
