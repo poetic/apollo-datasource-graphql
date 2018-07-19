@@ -2,7 +2,7 @@
 
 Connect your GraphQL server to an existing GraphQL API using DataSources.
 
-Note: This required [Apollo Server 2.0](https://www.apollographql.com/docs/apollo-server/whats-new.html)
+**Note: This requires [Apollo Server 2.0](https://www.apollographql.com/docs/apollo-server/whats-new.html)**
 
 ## GraphQL Data Source
 
@@ -50,12 +50,6 @@ export class CraftBeerGraphQLApi extends GraphQLDataSource {
       console.error(error);
     }
   }
-
-  protected willSendRequest(request: any) {
-    const { accessToken } = this.context;
-
-    set(request, 'headers.authorization', accessToken);
-  }
 }
 ```
 
@@ -81,8 +75,14 @@ public async searchCraftBeerByName(name) {
 
 You can intersept the request to set headers on an outgoing request. This is most commonly used for authentication. Since Apollo Data Sources have access to GraphQL context, you can store a user token or other information you need to have available when making a request.
 
+Add the method `willSendRequest` to your class which will recieve the `request` object. Here, you can modify the request to meet your needs.
+
 ```javascript
-TBD
+  protected willSendRequest(request: any) {
+    const { accessToken } = this.context;
+
+    set(request, 'headers.authorization', accessToken);
+  }
 ```
 
 ## TODO
