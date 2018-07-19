@@ -4,17 +4,9 @@ import { onError } from 'apollo-link-error';
 import { createHttpLink } from 'apollo-link-http';
 import { ApolloError, AuthenticationError, ForbiddenError } from 'apollo-server-errors';
 import to from 'await-to-js';
-import { DocumentNode } from 'graphql';
 import fetch from 'isomorphic-fetch';
 
-enum RequestType {
-  QUERY = 'QUERY',
-    MUTATION = 'MUTATION',
-}
-
-export interface IMutationRequest extends GraphQLRequest {
-  mutation: DocumentNode;
-}
+import { IMutationRequest, RequestType } from './types';
 
 export class GraphQLDataSource {
   public baseURL?: string;
