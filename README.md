@@ -57,7 +57,7 @@ export class CraftBeerGraphQLAPI extends GraphQLDataSource {
 
 ### GraphQL Operations
 
-The `query` and `mutation` methods on the `GraphQLDataSource` make a request to the GraphQL server. Both accepts a second parameter, `variables`, which can be used to pass any required or option parameters with the request.
+The `query` and `mutation` methods on the `GraphQLDataSource` make a request to the GraphQL server. Both accepts a second parameter, `options`, which can be used to pass variables, context, etc.
 
 ```javascript
 async searchCraftBeerByName(name) {
@@ -72,10 +72,19 @@ async searchCraftBeerByName(name) {
   }
 }
 ```
+
 |Parameter   |Description   |Required|
 |---|---|---|
 |graphQLDocument|A GraphQL document|true|
-|variables|An object that defines variables required or optional for the GraphQL document|false|
+|options|An object that defines options to pass with the GraphQL request|false|
+
+
+|Options   |Description   |Required|
+|---|---|---|
+|variables|A GraphQL document|false|
+|operationName|A string name of the query if it is named, otherwise it is null|false|
+|context|Metadata to be passed between Apollo Links|false|
+|extensions|A map to store extensions data to be sent to the server|false|
 
 ### Intercepting Operations
 
