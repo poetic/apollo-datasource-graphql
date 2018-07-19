@@ -87,7 +87,11 @@ Add the method `willSendRequest` to your class which will receive the `request` 
   willSendRequest(request) {
     const { accessToken } = this.context;
 
-    set(request, 'headers.authorization', accessToken);
+    if (!request.headers) {
+      request.headers = {};
+    }
+    
+    request.headers.authorization = accessToken;
   }
 ```
 
