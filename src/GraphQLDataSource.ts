@@ -9,8 +9,12 @@ import fetch from 'isomorphic-fetch';
 export class GraphQLDataSource {
   public baseURL?: string;
 
-  public async query(query: any, variables?: {}) {
-    return this.executeSingleOperation({ query, variables });
+  public async mutation(graphQLRequest: GraphQLRequest) {
+    return this.executeSingleOperation(graphQLRequest);
+  }
+
+  public async query(graphQLRequest: GraphQLRequest) {
+    return this.executeSingleOperation(graphQLRequest);
   }
 
   protected willSendRequest?(request: any): any;
