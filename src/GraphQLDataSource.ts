@@ -7,6 +7,11 @@ import to from 'await-to-js';
 import { DocumentNode } from 'graphql';
 import fetch from 'isomorphic-fetch';
 
+enum RequestType {
+  QUERY = 'QUERY',
+    MUTATION = 'MUTATION',
+}
+
 export interface IMutationRequest extends GraphQLRequest {
   mutation: DocumentNode;
 }
@@ -15,7 +20,7 @@ export class GraphQLDataSource {
   public baseURL?: string;
 
   public async mutation(request: IMutationRequest) {
-    const graphQLRequest = this.buildGraphQLRequest(request, 'MUTATION');
+    const graphQLRequest = this.buildGraphQLRequest(request, RequestType.MUTATION);
 
     return this.executeSingleOperation(graphQLRequest);
   }
@@ -28,11 +33,21 @@ export class GraphQLDataSource {
 
   protected willSendRequest?(request: any): any;
 
-  private buildGraphQLRequest(graphQLRequest: any, requestType: string = 'QUERY') {
+  private buildGraphQLRequest(
+    graphQLRequest: any,
+    requestType: RequestType = RequestType.QUERY,
+  ) {
+    const {
+      context,
+      extensions,
+      operationName,
+      variables,
+    } = graphQLRequest;
+
     let query;
 
     switch (requestType) {
-      case 'MUTATION':
+      case RequestType.MUTATION:
         query = graphQLRequest.mutation;
 
         break;
@@ -40,7 +55,13 @@ export class GraphQLDataSource {
         query = graphQLRequest.query;
     }
 
-    return { ...graphQLRequest, query };
+    return {
+      context,
+      extensions,
+      operationName,
+      query,
+      variables,
+    };
   }
 
   private composeLinks(): ApolloLink {
