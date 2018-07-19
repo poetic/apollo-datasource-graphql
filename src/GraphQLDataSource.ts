@@ -10,21 +10,13 @@ import fetch from 'isomorphic-fetch';
 export class GraphQLDataSource {
   public baseURL?: string;
 
-  public async mutation(
-    mutation: DocumentNode,
-    variables: Record<string, any>,
-  ) {
-    return this.executeSingleOperation({
-      variables,
-      query: mutation, // GraphQL request requires the DocumentNode property to be named query
-    });
+  public async mutation(mutation: DocumentNode, options: GraphQLRequest) {
+    // GraphQL request requires the DocumentNode property to be named query
+    return this.executeSingleOperation({ ...options, query: mutation });
   }
 
-  public async query(
-    query: DocumentNode,
-    variables: Record<string, any>,
-  ) {
-    return this.executeSingleOperation({ query, variables });
+  public async query(query: DocumentNode, options: GraphQLRequest) {
+    return this.executeSingleOperation({ ...options, query });
   }
 
   protected willSendRequest?(request: any): any;
