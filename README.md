@@ -94,6 +94,6 @@ Add the method `willSendRequest` to your class which will receive the `request` 
 ## TODO
 
 - [x] Complete README
-- [ ] Mutation method
+- [x] Mutation method
 - [ ] Test Suite
 - [ ] Request caching
