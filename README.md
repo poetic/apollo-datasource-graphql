@@ -2,23 +2,26 @@
 
 Connect your GraphQL server to an existing GraphQL API using DataSources.
 
-**Note: This requires [Apollo Server 2.0](https://www.apollographql.com/docs/apollo-server/whats-new.html)**
+**Note: This is designed to work with  [Apollo Server 2.0](https://www.apollographql.com/docs/apollo-server/whats-new.html) and [Data Sources](https://www.apollographql.com/docs/apollo-server/features/data-sources.html)**
 
 ## GraphQL Data Source
+
+### Install
 
 ```
 yarn add apollo-datasource-graphql
 ```
 
-or 
+or
 
 ```
 npm i apollo-datasource-graphql --save
 ```
 
-### 
+### Usage
 
-Define a data source by extending the `GraphqlDataSource` class. You can then implement the queries and mutatons that your resolvers require.
+Define a data source by extending the `GraphQLDataSource` class. You can then implement the queries and mutations that your resolvers require.
+
 
 ```javascript
 import { GraphQLDataSource } from 'apollo-datasource-graphql';
@@ -37,13 +40,13 @@ const CRAFT_BEERS = gql`
   }
 `;
 
-export class CraftBeerGraphQLApi extends GraphQLDataSource {
-  public baseURL = 'https//craft-beer-api.example/graphql';
+export class CraftBeerGraphQLAPI extends GraphQLDataSource {
+  baseURL = 'https//craft-beer-api.example/graphql';
 
-  public async getCraftBeers() {
+  async getCraftBeers() {
     try {
       const response = await this.query(CRAFT_BEERS);
-      
+
       return response.data.craftBeers;
     } catch (error) {
       console.error(error);
@@ -52,32 +55,36 @@ export class CraftBeerGraphQLApi extends GraphQLDataSource {
 }
 ```
 
-## GraphQL Operations
+### GraphQL Operations
 
-The `query` method on the `GraphQLDataSource` makes a request to the GraphQL server. `query` accepts a second parameter, `variables`, which can be used to pass any required or option params with the query request.
+The `query` and `mutation` methods on the `GraphQLDataSource` make a request to the GraphQL server. Both accepts a second parameter, `variables`, which can be used to pass any required or option parameters with the request.
 
 ```javascript
-public async searchCraftBeerByName(name) {
+async searchCraftBeerByName(name) {
   try {
     const response = await this.query(CRAFT_BEERS, {
       name,
     });
-    
+
     return response.data.craftBeer;
   } catch (error) {
     console.error(error);
   }
 }
 ```
+|Parameter   |Description   |Required|
+|---|---|---|
+|graphQLDocument|A GraphQL document|true|
+|variables|An object that defines variables required or optional for the GraphQL document|false|
 
-## Intercepting Operations
+### Intercepting Operations
 
-You can intersept the request to set headers on an outgoing request. This is most commonly used for authentication. Since Apollo Data Sources have access to GraphQL context, you can store a user token or other information you need to have available when making a request.
+You can intercept the request to set headers on an outgoing request. Since Apollo Data Sources have access to GraphQL context, you can store a user token or other information you need to have available when making a request.
 
-Add the method `willSendRequest` to your class which will recieve the `request` object. Here, you can modify the request to meet your needs.
+Add the method `willSendRequest` to your class which will receive the `request` object. Here, you can modify the request to meet your needs.
 
 ```javascript
-  protected willSendRequest(request: any) {
+  willSendRequest(request) {
     const { accessToken } = this.context;
 
     set(request, 'headers.authorization', accessToken);
@@ -86,7 +93,7 @@ Add the method `willSendRequest` to your class which will recieve the `request` 
 
 ## TODO
 
-- [ ] Complete README
+- [x] Complete README
 - [ ] Mutation method
 - [ ] Test Suite
 - [ ] Request caching
