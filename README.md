@@ -63,7 +63,9 @@ The `query` and `mutation` methods on the `GraphQLDataSource` make a request to 
 async searchCraftBeerByName(name) {
   try {
     const response = await this.query(CRAFT_BEERS, {
-      name,
+      variables: {
+        name,
+      },
     });
 
     return response.data.craftBeer;
