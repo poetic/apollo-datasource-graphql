@@ -1,3 +1,4 @@
+import { DataSourceConfig } from 'apollo-datasource';
 import { ApolloLink, execute, GraphQLRequest, makePromise } from 'apollo-link';
 import { setContext } from 'apollo-link-context';
 import { onError } from 'apollo-link-error';
@@ -7,8 +8,13 @@ import to from 'await-to-js';
 import { DocumentNode } from 'graphql';
 import fetch from 'isomorphic-fetch';
 
-export class GraphQLDataSource {
-  public baseURL?: string;
+export class GraphQLDataSource<TContext = any> {
+  public baseURL!: string;
+  public context!: TContext;
+
+  public initialize(config: DataSourceConfig<TContext>): void {
+    this.context = config.context;
+  }
 
   public async mutation(mutation: DocumentNode, options: GraphQLRequest) {
     // GraphQL request requires the DocumentNode property to be named query
