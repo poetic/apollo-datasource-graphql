@@ -1,107 +1,67 @@
-import { DataSourceConfig } from 'apollo-datasource';
+import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { ApolloLink, execute, GraphQLRequest, makePromise } from 'apollo-link';
 import { setContext } from 'apollo-link-context';
-import { onError } from 'apollo-link-error';
-import { createHttpLink } from 'apollo-link-http';
 import { ApolloError, AuthenticationError, ForbiddenError } from 'apollo-server-errors';
-import to from 'await-to-js';
 import { DocumentNode } from 'graphql';
-import fetch from 'isomorphic-fetch';
 
-export class GraphQLDataSource<TContext = any> {
-  public baseURL!: string;
+type ValueOrPromise<T> = T | Promise<T>;
+type RequestOptions = Record<string, any>;
+
+export class GraphQLDataSource<TContext = any> extends DataSource {
   public context!: TContext;
+  public link!: ApolloLink;
 
-  public initialize(config: DataSourceConfig<TContext>): void {
+  initialize(config: DataSourceConfig<TContext>): void {
     this.context = config.context;
+    this.link = ApolloLink.from([
+      this.onRequestLink(),
+      this.link
+    ]);
   }
 
   public async mutation(mutation: DocumentNode, options: GraphQLRequest) {
     // GraphQL request requires the DocumentNode property to be named query
-    return this.executeSingleOperation({ ...options, query: mutation });
+    return this.execute({ ...options, query: mutation });
   }
 
   public async query(query: DocumentNode, options: GraphQLRequest) {
-    return this.executeSingleOperation({ ...options, query });
+    return this.execute({ ...options, query });
   }
 
-  protected willSendRequest?(request: any): any;
+  protected willSendRequest?(request: RequestOptions): ValueOrPromise<void>;
 
-  private composeLinks(): ApolloLink {
-    const uri = this.resolveUri();
+  private async execute(operation: GraphQLRequest) {
+    try {
+      return await makePromise(execute(this.link, operation));
+    } catch (error) {
+      const status = error.statusCode ? error.statusCode : null;
+      const message = error.bodyText ? error.bodyText : null;
 
-    return ApolloLink.from([
-      this.onErrorLink(),
-      this.onRequestLink(),
-      createHttpLink({ fetch, uri }),
-    ]);
-  }
+      let apolloError: ApolloError;
 
-  private didEncounterError(error: any) {
-    const status = error.statusCode ? error.statusCode : null;
-    const message = error.bodyText ? error.bodyText : null;
+      switch (status) {
+        case 401:
+          apolloError = new AuthenticationError(message);
+          break;
+        case 403:
+          apolloError = new ForbiddenError(message);
+          break;
+        default:
+          apolloError = new ApolloError(message);
+      }
 
-    let apolloError: ApolloError;
-
-    switch (status) {
-      case 401:
-        apolloError = new AuthenticationError(message);
-        break;
-      case 403:
-        apolloError = new ForbiddenError(message);
-        break;
-      default:
-        apolloError = new ApolloError(message);
+      throw apolloError;
     }
-
-    throw apolloError;
-  }
-
-  private async executeSingleOperation(operation: GraphQLRequest) {
-    const link = this.composeLinks();
-
-    const [error, response] = await to(makePromise(execute(link, operation)));
-
-    if (error) {
-      this.didEncounterError(error);
-    }
-
-    return response;
-  }
-
-  private resolveUri(): string {
-    const baseURL = this.baseURL;
-
-    if (!baseURL) {
-      throw new ApolloError('Cannot make request to GraphQL API, missing baseURL');
-    }
-
-    return baseURL;
   }
 
   private onRequestLink() {
-    return setContext((_, request) => {
+    // QUESTION: Is that first argument needed? Code for apollo mentions it's actually `request, prevContext`
+    return setContext(async (_, request: RequestOptions) => {
       if (this.willSendRequest) {
-        this.willSendRequest(request);
+        await this.willSendRequest(request);
       }
 
       return request;
-    });
-  }
-
-  private onErrorLink() {
-    return onError(({ graphQLErrors, networkError }) => {
-      if (graphQLErrors) {
-        graphQLErrors.map(graphqlError =>
-          console.error(
-            `[GraphQL error]: ${graphqlError}`,
-          ),
-        );
-      }
-
-      if (networkError) {
-        console.log(`[Network Error]: ${networkError}`);
-      }
     });
   }
 }
