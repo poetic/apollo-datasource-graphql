@@ -94,7 +94,7 @@ export class GraphQLDataSource<TContext = any> {
       if (graphQLErrors) {
         graphQLErrors.map(graphqlError =>
           console.error(
-            `[GraphQL error]: ${graphqlError}`,
+            `[GraphQL error]: ${graphqlError.message}`,
           ),
         );
       }
