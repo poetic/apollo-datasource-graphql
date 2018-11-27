@@ -50,8 +50,11 @@ export class GraphQLDataSource<TContext = any> {
       case 403:
         apolloError = new ForbiddenError(message);
         break;
+      case 502:
+        apolloError = new ApolloError('Bad Gateway', status);
+        break;
       default:
-        apolloError = new ApolloError(message);
+        apolloError = new ApolloError(message, status);
     }
 
     throw apolloError;
