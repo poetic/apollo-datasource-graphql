@@ -1,0 +1,12 @@
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+dist/
+node_modules/
