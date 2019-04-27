@@ -16,12 +16,12 @@ export class GraphQLDataSource<TContext = any> {
     this.context = config.context;
   }
 
-  public async mutation(mutation: DocumentNode, options: GraphQLRequest) {
+  public async mutation(mutation: DocumentNode, options?: GraphQLRequest) {
     // GraphQL request requires the DocumentNode property to be named query
     return this.executeSingleOperation({ ...options, query: mutation });
   }
 
-  public async query(query: DocumentNode, options: GraphQLRequest) {
+  public async query(query: DocumentNode, options?: GraphQLRequest) {
     return this.executeSingleOperation({ ...options, query });
   }
 
