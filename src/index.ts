@@ -1,1 +1,1 @@
-export { GraphQLDataSource } from './GraphQLDataSource';
+export { GraphQLDataSource as default, GraphQLDataSource } from './GraphQLDataSource';
